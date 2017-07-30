@@ -11,10 +11,13 @@ const cli = meow(`
 	  --foo    Lorem ipsum [Default: false]
 
 	Examples
-	  $ shelf adduser xo xo@example.com
-	  created user xo with email xo@example.com
-	  $ shelf ponies
-	  ponies & rainbows
+	  $ shelf adduser xo
+	  Finished setting up user xo.
+
+	  $ shelf adddomain xo example.com
+      Finished setting up domain example.com.
+      Container running.
+      done
 `);
 
 const command = cli.input[0];
@@ -35,15 +38,11 @@ if (command === 'adddomain' || command === 'deldomain') {
         domain
     }).then(msg => console.log(msg)).catch(err => console.error(err.message));
 } else if (command === 'adduser' || command === 'deluser') {
-    //
-    // const username = cli.input[1];
-    //
-    // shelf.adduser({
-    //     username,
-    //     email
-    // }).then(user => {
-    //     console.log(`created user ${user.username} with email ${user.email}`);
-    // });
+    const username = cli.input[1];
+
+    shelf.adduser({
+        username
+    }).then(msg => console.log(msg)).catch(err => console.error(err.message));
 
     // @NOTE: Check ~/code/shelf-old for code
     // 1. Create/Delete user account

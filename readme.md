@@ -6,7 +6,7 @@
 ## Install
 
 ```
-$ npm install --save shelf
+$ yarn add shelf
 ```
 
 
@@ -15,8 +15,10 @@ $ npm install --save shelf
 ```js
 const shelf = require('shelf');
 
-shelf('unicorns');
-//=> 'unicorns & rainbows'
+shelf.adduser({
+    username: 'xo'
+});
+//=> 'Finished setting up user xo.'
 ```
 
 
@@ -43,23 +45,26 @@ Lorem ipsum.
 ## CLI
 
 ```
-$ npm install --global shelf
+$ yarn global add shelf
 ```
 
 ```
 $ shelf --help
 
   Usage
-    shelf [input]
+    $ shelf [input]
 
   Options
-    --foo  Lorem ipsum [Default: false]
+    --foo    Lorem ipsum [Default: false]
 
   Examples
-    $ shelf
-    unicorns & rainbows
-    $ shelf ponies
-    ponies & rainbows
+    $ shelf adduser xo
+    Finished setting up user xo.
+
+    $ shelf adddomain xo example.com
+      Finished setting up domain example.com.
+      Container running.
+      done
 ```
 
 
