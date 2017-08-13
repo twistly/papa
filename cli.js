@@ -15,14 +15,21 @@ const cli = meow(`
 	  Finished setting up user xo.
 
 	  $ shelf adddomain xo example.com
-      Finished setting up domain example.com.
-      Container running.
-      done
-`);
+	  Finished setting up domain example.com.
+	  Container running.
+	  done
+`, {
+    boolean: [
+        'init'
+    ]
+});
 
 const command = cli.input[0];
+const flags = cli.flags;
 
-if (command === 'adddomain' || command === 'deldomain') {
+if (flags.init === true) {
+    shelf.init().then(msg => console.log(msg)).catch(err => console.error(err.message));
+} else if (command === 'adddomain' || command === 'deldomain') {
     const username = cli.input[1];
     const domain = cli.input[2];
     shelf.adddomain({

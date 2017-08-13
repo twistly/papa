@@ -25,6 +25,8 @@
         "cli"
     ],
     "dependencies": {
+        "conf": "^1.1.2",
+        "env-paths": "^1.0.0",
         "make-dir": "^1.0.0",
         "meow": "^3.7.0",
         "node-docker-api": "^1.1.16",

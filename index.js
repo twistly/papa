@@ -3,52 +3,67 @@ const writeFile = require('write');
 const outdent = require('outdent');
 const makeDir = require('make-dir');
 const pathExists = require('path-exists');
+const Conf = require('conf');
+const envPaths = require('env-paths');
 const {Docker} = require('node-docker-api');
 const {isValid, tldExists} = require('tldjs');
 
+const config = new Conf();
 const docker = new Docker({
     socketPath: '/var/run/docker.sock'
 });
 
-//
-// class User {
-//     constructor(opts) {
-//         this._id = uuidv4();
-//         this.username = opts.username;
-//         this.domains = opts.domains;
-//     }
-// }
-//
-// class Domain {
-//     constructor(opts) {
-//         this._id = uuidv4();
-//         this.url = opts.url;
-//     }
-// }
-//
-// const domain = new Domain({
-//     url: 'example.com'
-// });
-// const user = new User({
-//     username: 'user123',
-//     domains: [
-//         domain
-//     ]
-// });
-//
-// log(user);
+module.exports.init = opts => {
+    opts = Object.assign({
+        mysqlDockerImage: 'abiosoft/caddy',
+        mysqlDataDirectory: path.join(envPaths('shelf').data, 'mysql'),
+        caddyDataDirectory: path.join(envPaths('shelf').data, 'caddy')
+    }, opts);
+
+    return new Promise(async (resolve, reject) => {
+        if (config.get('installed')) {
+            return reject(new Error('Shelf is already installed.'));
+        }
+
+        const startMySQL = () => {
+            return docker.container.create({
+                Image: opts.mysqlDockerImage,
+                Binds: [opts.mysqlDataDirectory + ':/var/lib/mysql']
+            })
+            .then(container => container.start())
+            .then(container => container.status());
+        };
+
+        const startLoadBalancer = () => {
+            return docker.container.create({
+                Image: 'abiosoft/caddy',
+                Binds: [
+                    opts.caddyDataDirectory + '/Caddyfile:/etc/Caddyfile',
+                    opts.caddyDataDirectory + '/vhosts:/root/caddy/vhosts'
+                ],
+                PortBindings: {
+                    '80/tcp': [{
+                        HostPort: '80'
+                    }],
+                    '443/tcp': [{
+                        HostPort: '80'
+                    }]
+                }
+            })
+            .then(container => container.start())
+            .then(container => container.status());
+        };
+
+        await startMySQL();
+        await startLoadBalancer();
+
+        resolve('Shelf inititilised.');
+    });
+};
 
 module.exports.start = opts => {
+    // NOTE: This is to start the api server and the admin/user webui
     return opts;
-    //
-    // docker run --name some-mariadb -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:tag
-    // docker run -d \
-    // -p 80:80 \
-    // -p 443:443 \
-    // -v $(pwd)/caddy/Caddyfile:/etc/Caddyfile \
-    // -v $(pwd)/caddy/vhosts:/root/caddy/vhosts \
-    // --name=load-balancer \
-    // abiosoft/caddy
 };
 
 module.exports.adddomain = opts => {
@@ -85,7 +100,7 @@ module.exports.createContainer = opts => {
         const {user, domain} = opts;
 
         if (user && domain) {
-            return docker.container.create({
+            docker.container.create({
                 Image,
                 Labels: {
                     domain,
