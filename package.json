@@ -1,6 +1,6 @@
 {
     "name": "@twistly/shelf",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "description": "A webhosting manager",
     "license": "MIT",
     "repository": "twistly/shelf",
@@ -10,7 +10,7 @@
         "url": "github.com/twistly/shelf"
     },
     "publishConfig": {
-    	"access": "public"
+        "access": "public"
     },
     "bin": "cli.js",
     "engines": {
