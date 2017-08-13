@@ -9,6 +9,9 @@
         "email": "xo@wvvw.me",
         "url": "github.com/twistly/shelf"
     },
+    "publishConfig": {
+    	"access": "public"
+    },
     "bin": "cli.js",
     "engines": {
         "node": ">=4"
