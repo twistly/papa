@@ -1,5 +1,5 @@
 {
-    "name": "shelf",
+    "name": "@twistly/shelf",
     "version": "0.0.0",
     "description": "A webhosting manager",
     "license": "MIT",
